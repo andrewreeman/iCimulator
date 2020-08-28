@@ -107,7 +107,7 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     
     private func generateStaticImageLayer() {
         guard let imagePath = plistArgument else { return }
-        guard let image = UIImage(contentsOfFile: imagePath) else { fatalError("Invalid image path.") }
+        guard let image = UIImage(contentsOfFile: imagePath) ?? UIImage.init(named: imagePath) else { fatalError("Invalid image path.") }        
         
         self.contents = image.cgImage
     }
