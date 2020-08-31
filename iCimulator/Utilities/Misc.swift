@@ -14,6 +14,50 @@ import Photos
 internal struct iCimulatorPlist: Codable{
     let `Type`: String
     let Argument: String
+    
+    let Playlist: [String]?
+       
+       internal class ArgumentIterator: IteratorProtocol {
+           static private var instance: ArgumentIterator?
+           
+           typealias Element = String
+           
+           private let argument: String
+           private let playlist: [String]?
+           private var index: Int
+           
+           
+           init(argument: String, playlist: [String]?) {
+               self.argument = argument;
+               self.playlist = playlist
+               index = playlist?.startIndex ?? 0
+               
+               if ArgumentIterator.instance == nil {
+                   ArgumentIterator.instance = self
+               }
+           }
+           
+           func next() -> String? {
+               if let i = ArgumentIterator.instance {
+                   return i.doNext()
+               }
+               else {
+                   return doNext()
+               }
+           }
+           
+           private func doNext() -> String? {
+               guard let list = playlist else { return argument }
+               
+               let current = list[index]
+               index += 1
+               if index == list.endIndex {
+                   index = list.startIndex
+               }
+               
+               return current
+           }
+       }
 }
 
 //-MARK: Enumeration

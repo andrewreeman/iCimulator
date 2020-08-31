@@ -15,7 +15,7 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     
     //-MARK: Original
     private var previewType: PreviewType?
-    private var plistArgument: String?
+    private var plistArgument: iCimulatorPlist.ArgumentIterator?
 
     private var capturedImage: Data? = nil
     private var avPlayer: AVPlayerLooper?
@@ -76,7 +76,7 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
             let plist = try PropertyListDecoder().decode(iCimulatorPlist.self, from: data)
             
             self.previewType = PreviewType(rawValue: plist.Type)
-            self.plistArgument = plist.Argument
+            self.plistArgument = iCimulatorPlist.ArgumentIterator(argument: plist.Argument, playlist: plist.Playlist)
             
         } catch let e {
             fatalError("Failed to read plist: \(e)")
@@ -106,14 +106,14 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     }
     
     private func generateStaticImageLayer() {
-        guard let imagePath = plistArgument else { return }
+        guard let imagePath = plistArgument?.next() else { return }
         guard let image = UIImage(contentsOfFile: imagePath) ?? UIImage.init(named: imagePath) else { fatalError("Invalid image path.") }        
         
         self.contents = image.cgImage
     }
     
     private func generateVideoLayer(loop: Bool) {
-        guard let videoPath = plistArgument else { return }
+        guard let videoPath = plistArgument?.next() else { return }
         let url = URL(fileURLWithPath: videoPath)
         
         let playerItem = AVPlayerItem(asset: AVAsset(url: url))
@@ -183,7 +183,7 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
         let skipLoopCount = floor((Double(interval) + recordingStartTime!.seconds - videoDuration) / videoDuration) //k
         let stopRecordPoint = videoDuration - (videoDuration * (skipLoopCount + 1) - recordingStartTime!.seconds ) //t2
         
-        guard let videoPath = self.plistArgument else { return }
+        guard let videoPath = self.plistArgument?.next() else { return }
         let videoUrl = URL(fileURLWithPath: videoPath)
         
         let videoBlock1 = [recordingStartTime!.seconds, videoDuration]
