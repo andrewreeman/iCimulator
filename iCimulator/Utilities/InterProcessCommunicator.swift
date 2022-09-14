@@ -9,7 +9,6 @@
 import UIKit
 import Network
 
-@available(iOS 12, *)
 internal class InterProcessCommunicator {
     private var connection: NWConnection?
     private var savedImages: [UIImage] = []

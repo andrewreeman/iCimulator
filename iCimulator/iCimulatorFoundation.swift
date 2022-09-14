@@ -25,7 +25,6 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     private var stopWatch: StopWatch = StopWatch()
     private var recordingStartTime: CMTime?
     
-    @available(iOS 12 , *)
     private lazy var ipc = InterProcessCommunicator()
     
     
